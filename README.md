@@ -1,7 +1,9 @@
 # SmartHomeEnocean
 Projekt, um ein SmartHome-System mit EnOcean und MQTT aufzubauen.
 #
-DangTrinh.
-Christopher.
+
+Dang Trinh.
+#
+Christopher Hobert.
 #
 
