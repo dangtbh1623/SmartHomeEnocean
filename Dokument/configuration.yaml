@@ -1,0 +1,91 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+  
+
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+
+# Example configuration.yaml entry
+mqtt:
+  broker: core-mosquitto
+  
+enocean:
+  device: /dev/ttyUSB0
+  
+
+  
+# Example configuration.yaml entry for EEP A5-10-10
+sensor:
+  - name: "Living Room"
+    platform: enocean
+    id: [0x01,0x90,0x84,0x3C]
+    device_class: temperature
+    range_from: 0
+    range_to: 250
+  - name: "Enocean_Temperatur_MQTT_ORG"
+    platform: mqtt
+    state_topic: "enocean2mqtt/0x088e684/JSON" 
+    value_template: "{{ value_json.ORG.description }}"
+    json_attributes_topic: "enocean2mqtt/0x088e684/JSON"
+    json_attributes_template: "{{ value_json.ORG | tojson }}"
+  - name: "Enocean_Temperatur_MQTT_TMP"
+    platform: mqtt
+    state_topic: "enocean2mqtt/0x088e684/JSON" 
+    value_template: "{{ value_json.TMP.value }}"
+    unit_of_measurement: "°C"
+    json_attributes_topic: "enocean2mqtt/0x088e684/JSON"
+    json_attributes_template: "{{ value_json.TMP | tojson }}"
+    
+sensor 2:
+  - name: "Enocean_TemperaturTH2_MQTT_ORG"
+    platform: mqtt
+    state_topic: "enocean2mqtt/0xffe0ae80/JSON" 
+    value_template: "{{ value_json.ORG.description }}"
+    json_attributes_topic: "enocean2mqtt/0xffe0ae80/JSON"
+    json_attributes_template: "{{ value_json.ORG | tojson }}"
+  - name: "Enocean_TemperaturTH2_MQTT_TMP"
+    platform: mqtt
+    state_topic: "enocean2mqtt/0xffe0ae80/JSON" 
+    value_template: "{{ value_json.TMP.value }}"
+    unit_of_measurement: "°C"
+    json_attributes_topic: "enocean2mqtt/0xffe0ae80/JSON"
+    json_attributes_template: "{{ value_json.TMP | tojson }}"
+  - name: "Enocean_HumidityTH2_MQTT"
+    platform: mqtt
+    state_topic: "enocean2mqtt/0xffe0ae80/humidity" 
+    unit_of_measurement: "%"
+    
+sensor 3:
+  - name: "Enocean_Technologie_TH02"
+    platform: enocean
+    id: [0xFF,0xE0,0xAE,0x80]
+    device_class: temperature
+    range_from: 255
+    range_to: 0
+  - name: "Enocean_Technologie_STM330"
+    platform: enocean
+    id: [0x00,0x88,0xE6,0x84]
+    device_class: temperature
+    range_from: 255
+    range_to: 0
+    
+
+# Test MQTT
+light:
+  - platform: mqtt
+    name: RGB_Led
+    command_topic: "enocean2mqtt/led/switch"
+    state_topic: "enocean2mqtt/led/status" 
+    payload_on: "ON"
+    payload_off: "OFF"
+    retain: true
+    
